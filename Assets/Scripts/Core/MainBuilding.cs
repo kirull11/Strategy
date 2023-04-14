@@ -1,28 +1,39 @@
 using Abstractions;
+using Commands;
 using UnityEngine;
 
 namespace Core
 {
-    public sealed class MainBuilding : MonoBehaviour, IUnitProducer, ISelectable
+    public sealed class MainBuilding :MonoBehaviour, ISelectable, IAttackable
     {
         public float Health => _health;
         public float MaxHealth => _maxHealth;
         public Sprite Icon => _icon;
 
-        [SerializeField] private GameObject _unitPrefab;
-        [SerializeField] private Transform _unitsParent;
+        public Transform PivotPoint => throw new System.NotImplementedException();
 
         [SerializeField] private float _maxHealth = 1000;
         [SerializeField] private Sprite _icon;
+        [SerializeField] private Transform _pivotPoint;
 
-        private float _health = 1000;
 
-        public void ProduceUnit()
+        private float _health ;
+        private void Start()
         {
-            Instantiate(_unitPrefab,
-                new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)),
-                Quaternion.identity,
-                _unitsParent);
+            _health = _maxHealth;
+        }
+
+        public void RecieveDamage(int amount)
+        {
+            if (_health <= 0)
+            {
+                return;
+            }
+            _health -= amount;
+            if (_health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
